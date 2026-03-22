@@ -1,7 +1,13 @@
--- Справочник стран покупателей
-CREATE TABLE dim_customer_country (
+-- Справочник стран
+CREATE TABLE dim_country (
     country_id   SERIAL PRIMARY KEY,
     country_name VARCHAR(100) NOT NULL UNIQUE
+);
+
+-- Справочник городов
+CREATE TABLE dim_city (
+    city_id    SERIAL PRIMARY KEY,
+    city_name  VARCHAR(100) NOT NULL UNIQUE
 );
 
 -- Измерение: Покупатели
@@ -11,7 +17,7 @@ CREATE TABLE dim_customer (
     last_name    VARCHAR(100),
     age          INTEGER,
     email        VARCHAR(200),
-    country_id   INTEGER REFERENCES dim_customer_country(country_id),
+    country_id   INTEGER REFERENCES dim_country(country_id),
     postal_code  VARCHAR(50)
 );
 
@@ -23,19 +29,13 @@ CREATE TABLE dim_pet (
     pet_breed VARCHAR(100)
 );
 
--- Справочник стран продавцов
-CREATE TABLE dim_seller_country (
-    country_id   SERIAL PRIMARY KEY,
-    country_name VARCHAR(100) NOT NULL UNIQUE
-);
-
 -- Измерение: Продавцы
 CREATE TABLE dim_seller (
     seller_id   SERIAL PRIMARY KEY,
     first_name  VARCHAR(100),
     last_name   VARCHAR(100),
     email       VARCHAR(200),
-    country_id  INTEGER REFERENCES dim_seller_country(country_id),
+    country_id  INTEGER REFERENCES dim_country(country_id),
     postal_code VARCHAR(50)
 );
 
@@ -75,28 +75,16 @@ CREATE TABLE dim_pet_category (
     pet_category_name VARCHAR(50) NOT NULL UNIQUE
 );
 
--- Справочник стран магазинов
-CREATE TABLE dim_store_country (
-    country_id   SERIAL PRIMARY KEY,
-    country_name VARCHAR(100) NOT NULL UNIQUE
-);
-
 -- Измерение: Магазины
 CREATE TABLE dim_store (
     store_id   SERIAL PRIMARY KEY,
     store_name VARCHAR(200),
     location   VARCHAR(200),
-    city       VARCHAR(100),
+    city_id    INTEGER REFERENCES dim_city(city_id),
     state      VARCHAR(100),
-    country_id INTEGER REFERENCES dim_store_country(country_id),
+    country_id INTEGER REFERENCES dim_country(country_id),
     phone      VARCHAR(50),
     email      VARCHAR(200)
-);
-
--- Справочник стран поставщиков
-CREATE TABLE dim_supplier_country (
-    country_id   SERIAL PRIMARY KEY,
-    country_name VARCHAR(100) NOT NULL UNIQUE
 );
 
 -- Измерение: Поставщики
@@ -107,8 +95,8 @@ CREATE TABLE dim_supplier (
     email            VARCHAR(200),
     phone            VARCHAR(50),
     address          VARCHAR(300),
-    city             VARCHAR(100),
-    country_id       INTEGER REFERENCES dim_supplier_country(country_id)
+    city_id          INTEGER REFERENCES dim_city(city_id),
+    country_id       INTEGER REFERENCES dim_country(country_id)
 );
 
 -- Таблица фактов: Продажи
